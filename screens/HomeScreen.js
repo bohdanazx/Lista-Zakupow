@@ -6,49 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { toggleBought, removeProduct } from "../utils/shoppingListUtils";
 
 const HomeScreen = ({ shoppingList, setShoppingList }) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState(null);
 
-  // Функція зміни статусу купленого товару
-  const toggleBought = (sectionIndex, itemIndex) => {
-    let newList = [...shoppingList];
-    let item = newList[sectionIndex]?.data[itemIndex];
-
-    if (!item) return;
-
-    item.bought = !item.bought;
-
-    if (item.bought) {
-      newList[sectionIndex].data.splice(itemIndex, 1);
-      newList[1].data.push(item);
-    } else {
-      newList[1].data.splice(newList[1].data.indexOf(item), 1);
-      newList[0].data.unshift(item);
-    }
-
-    setShoppingList([...newList]);
-  };
-
-  // Функція видалення товару
-  const removeProduct = (sectionTitle, itemId) => {
-    console.log("🔍 Видалення продукту...");
-    let newList = shoppingList.map((section) => {
-      if (section.title === sectionTitle) {
-        return {
-          ...section,
-          data: section.data.filter((item) => item.id !== itemId),
-        };
-      }
-      return section;
-    });
-    setShoppingList(newList);
-  };
-
-  // Фільтрація за магазином
   const applyFilter = (store) => setFilter(store);
   const clearFilter = () => setFilter(null);
 
@@ -69,7 +35,10 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
   }));
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <TextInput
         style={styles.search}
         placeholder="🔍 Wyszukaj produkt..."
@@ -100,8 +69,10 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
             style={styles.item}
             onPress={() =>
               toggleBought(
-                shoppingList.findIndex((s) => s.title === section.title),
-                section.data.findIndex((i) => i.id === item.id)
+                shoppingList,
+                section.title,
+                item.id,
+                setShoppingList
               )
             }
           >
@@ -110,7 +81,14 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
             </Text>
             <Text
               style={styles.delete}
-              onPress={() => removeProduct(section.title, item.id)}
+              onPress={() =>
+                removeProduct(
+                  shoppingList,
+                  section.title,
+                  item.id,
+                  setShoppingList
+                )
+              }
             >
               🗑
             </Text>
@@ -120,7 +98,7 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
           <Text style={styles.header}>{title}</Text>
         )}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -128,8 +106,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingTop: 30, // Відступ зверху для зручності
-    paddingBottom: 50, // Відступ знизу для кнопки додавання
+    paddingTop: Platform.OS === "ios" ? 50 : 30, // Відступ зверху для статус-бара
+    paddingBottom: 80, // Відступ знизу для кнопки додавання
     backgroundColor: "#fff",
   },
   search: {
@@ -160,7 +138,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 15, // Збільшено відступ для гарного вигляду
+    padding: 15,
     borderBottomWidth: 1,
   },
   bought: {
