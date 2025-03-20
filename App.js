@@ -49,7 +49,6 @@ export default function App() {
           setShoppingList(newList);
         }}
       />
-      {/* Фіксована кнопка додавання продукту */}
       <View style={styles.addButtonContainer}>
         <Button
           title="➕ Dodaj Produkt"
@@ -63,13 +62,13 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#ffffff",
     paddingTop: 20,
   },
   addButtonContainer: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 20,
   },
 });

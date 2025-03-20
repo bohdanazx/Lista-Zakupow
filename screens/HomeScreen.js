@@ -3,13 +3,12 @@ import {
   View,
   Text,
   SectionList,
-  TouchableOpacity,
-  StyleSheet,
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet, // ДОДАНО StyleSheet
 } from "react-native";
-import { toggleBought, removeProduct } from "../utils/shoppingListUtils";
+import ProductItem from "../components/ProductItem";
 
 const HomeScreen = ({ shoppingList, setShoppingList }) => {
   const [search, setSearch] = useState("");
@@ -26,18 +25,17 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
 
   const filteredList = shoppingList.map((section) => ({
     ...section,
-    data: section.data.filter((item) => {
-      return (
+    data: section.data.filter(
+      (item) =>
         item.name.toLowerCase().includes(search.toLowerCase()) &&
         (!filter || item.store === filter)
-      );
-    }),
+    ),
   }));
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={styles.container} // Тут ти отримувала помилку, бо styles не було оголошено
     >
       <TextInput
         style={styles.search}
@@ -65,34 +63,12 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
         sections={filteredList}
         keyExtractor={(item) => item.id}
         renderItem={({ item, section }) => (
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() =>
-              toggleBought(
-                shoppingList,
-                section.title,
-                item.id,
-                setShoppingList
-              )
-            }
-          >
-            <Text style={item.bought ? styles.bought : styles.notBought}>
-              {item.name} - {item.store} ({item.price} zł)
-            </Text>
-            <Text
-              style={styles.delete}
-              onPress={() =>
-                removeProduct(
-                  shoppingList,
-                  section.title,
-                  item.id,
-                  setShoppingList
-                )
-              }
-            >
-              🗑
-            </Text>
-          </TouchableOpacity>
+          <ProductItem
+            item={item}
+            section={section}
+            shoppingList={shoppingList}
+            setShoppingList={setShoppingList}
+          />
         )}
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
@@ -102,6 +78,7 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
   );
 };
 
+// ОГОЛОШУЄМО СТИЛІ ДЛЯ ЕКРАНУ
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,22 +111,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginVertical: 5,
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
-    borderBottomWidth: 1,
-  },
-  bought: {
-    textDecorationLine: "line-through",
-    color: "gray",
-  },
-  notBought: {
-    color: "black",
-  },
-  delete: {
-    color: "red",
   },
 });
 
