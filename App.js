@@ -21,7 +21,7 @@ export default function App() {
     try {
       await AsyncStorage.setItem("shoppingList", JSON.stringify(shoppingList));
     } catch (error) {
-      console.error("Помилка збереження даних", error);
+      console.error("Error", error);
     }
   };
 
@@ -30,7 +30,7 @@ export default function App() {
       const storedList = await AsyncStorage.getItem("shoppingList");
       setShoppingList(storedList ? JSON.parse(storedList) : sampleData);
     } catch (error) {
-      console.error("Помилка завантаження даних", error);
+      console.error("Error", error);
     }
   };
 
@@ -66,9 +66,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   addButtonContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingBottom: 20,
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
 });

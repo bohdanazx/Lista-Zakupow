@@ -6,7 +6,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet, // ДОДАНО StyleSheet
+  StyleSheet,
 } from "react-native";
 import ProductItem from "../components/ProductItem";
 
@@ -35,7 +35,7 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container} // Тут ти отримувала помилку, бо styles не було оголошено
+      style={styles.container}
     >
       <TextInput
         style={styles.search}
@@ -78,13 +78,12 @@ const HomeScreen = ({ shoppingList, setShoppingList }) => {
   );
 };
 
-// ОГОЛОШУЄМО СТИЛІ ДЛЯ ЕКРАНУ
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingTop: Platform.OS === "ios" ? 50 : 30, // Відступ зверху для статус-бара
-    paddingBottom: 80, // Відступ знизу для кнопки додавання
+    paddingTop: Platform.OS === "ios" ? 50 : 30,
+    paddingBottom: 80,
     backgroundColor: "#fff",
   },
   search: {
